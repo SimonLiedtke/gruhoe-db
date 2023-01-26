@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, abort, jsonify, request
+from flask import Flask, abort, jsonify, render_template, request
 
 from gruhoedb import get_cells
 from gruhoedb.models import Pick
@@ -14,7 +14,7 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 @app.route('/')
 def index():
-    abort(NOT_FOUND)
+    return render_template('index.html')
 
 
 @app.route('/search')

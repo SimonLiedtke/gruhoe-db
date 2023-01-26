@@ -1,0 +1,38 @@
+html, body { height: 95%; }
+
+.container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item {
+    border: 2px solid rgb(95, 97, 110);
+    border-radius: .5em;
+    padding: 20px;
+    width: 30em;
+    height: 200px;
+}
+
+#content {
+    width: 20em;
+}
+
+form {
+    display: table;
+}
+
+form div {
+    display: table-row;
+}
+
+label,
+input {
+    display: table-cell;
+    margin-bottom: 10px;
+}
+
+label {
+    padding-right: 10px;
+}
