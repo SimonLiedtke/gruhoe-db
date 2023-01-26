@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gruhö-DB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+<div class="container">
+<div class="item">
+<h1>GruHö-Datenbank-Suche</h1>
+<form action="/search" method="get">
+    <div>
+        <label for="artist">Artist:</label>
+        <input id="artist" name="artist" />
+    </div>
+    <div>
+        <label for="album">Album:</label>
+        <input id="album" name="album" />
+    </div>
+    <div>
+        <label>Output format:</label>
+        <span>
+            <input type="radio" name="outputformat" value="json" checked /><label>JSON</label>
+            <input type="radio" name="outputformat" value="html" disabled /><label>HTML</label>
+        </span>
+    </div>
+    <div>
+        <input type="submit" value="Search" />
+    </div>
+</form>
+</div>
+</div>
+</body>
+</html>
