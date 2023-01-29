@@ -1,4 +1,7 @@
-html, body { height: 95%; }
+html, body {
+    height: 95%;
+    font-family: sans-serif;
+}
 
 .container {
     height: 100%;
@@ -8,7 +11,7 @@ html, body { height: 95%; }
 }
 
 .item {
-    border: 2px solid rgb(95, 97, 110);
+    border: 1px solid #999;
     border-radius: .5em;
     padding: 20px;
     width: 40em;
