@@ -21,14 +21,38 @@
     <div>
         <label>Output format:</label>
         <span>
-            <input type="radio" name="outputformat" value="json" checked /><label>JSON</label>
-            <input type="radio" name="outputformat" value="html" disabled /><label>HTML</label>
+            <input type="radio" name="outputformat" value="json" /><label>JSON</label>
+            <input type="radio" name="outputformat" value="html" checked /><label>HTML</label>
         </span>
     </div>
     <div>
         <input type="submit" value="Search" />
     </div>
 </form>
+{% if search_results %}
+    <table>
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Month</th>
+                <th>Day</th>
+                <th>Artist</th>
+                <th>Album</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for result in search_results %}
+            <tr>
+                <td>{{ result.year }}</td>
+                <td>{{ result.month }}</td>
+                <td>{{ result.day }}</td>
+                <td>{{ result.artist }}</td>
+                <td>{{ result.album }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
 </div>
 </div>
 </body>
