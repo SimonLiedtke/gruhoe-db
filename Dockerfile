@@ -9,4 +9,4 @@ COPY . .
 
 ENV PORT=8080
 
-CMD [ "gunicorn", "--log-level=info", "gruhoedb.webservice:app" ]
+CMD [ "gunicorn", "--log-level=info", "gruhoedb.webserver:app" ]
