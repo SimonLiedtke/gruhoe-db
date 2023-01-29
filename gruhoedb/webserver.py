@@ -1,3 +1,4 @@
+from enum import StrEnum, auto
 import os
 
 from flask import Flask, abort, jsonify, render_template, request
@@ -10,6 +11,11 @@ NOT_FOUND = 404
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
+
+
+class OutputFormat(StrEnum):
+    HTML = auto()
+    JSON = auto()
 
 
 @app.route('/')
@@ -26,7 +32,16 @@ def search():
         pick._asdict() for pick in get_all_cells() if matches_search(pick, artist_query, album_query)
     ]
 
-    return jsonify(cells[:int(os.getenv('MAX_SEARCH_RESULTS'))])
+    results = cells[:int(os.getenv('MAX_SEARCH_RESULTS'))]
+
+    outputformat = request.args.get('outputformat')
+
+    if outputformat == OutputFormat.HTML:
+        return render_template('index.html', search_results=results)
+    elif outputformat == OutputFormat.JSON:
+        return jsonify(results)
+    else:
+        return abort(BAD_REQUEST)
 
 
 @app.route('/count')
