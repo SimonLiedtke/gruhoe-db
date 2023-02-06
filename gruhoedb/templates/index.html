@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Gruhö-DB</title>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.2/datatables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.2/datatables.min.css" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#searchResults').DataTable({
+                "searching": false,
+                "lengthChange": false
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="container">
@@ -38,7 +48,7 @@
     </div>
 </form>
 {% if search_results %}
-    <table>
+    <table id="searchResults">
         <thead>
             <tr>
                 <th>Year</th>

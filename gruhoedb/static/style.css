@@ -3,6 +3,11 @@ html, body {
     font-family: sans-serif;
 }
 
+a {
+    color: black;
+    text-decoration: dashed underline #999;
+}
+
 .container {
     height: 100%;
     display: flex;
@@ -42,7 +47,7 @@ label {
 table {
   border-collapse: collapse;
   width: 100%;
-  margin-top: 1em;
+  margin-top: 1em !important;
 }
 
 td, th {
