@@ -1,3 +1,4 @@
+from datetime import date
 from enum import StrEnum, auto
 import os
 
@@ -27,9 +28,12 @@ def index():
 def search():
     artist_query = request.args.get('artist', '')
     album_query = request.args.get('album', '')
+    from_ = get_date_from_input(request.args.get('from')) or date(1, 1, 1)
+    to = get_date_from_input(request.args.get('to')) or date.today()
 
     cells = [
         pick._asdict() for pick in get_all_cells() if matches_search(pick, artist_query, album_query)
+        and from_ < pick.date < to
     ]
 
     results = cells[:int(os.getenv('MAX_SEARCH_RESULTS'))]
@@ -55,6 +59,13 @@ def matches_search(pick, artist_query, album_query):
     if not artist_query and album_query:
         return album_query.lower() in pick.album.lower()
     return album_query.lower() in pick.album.lower() or artist_query.lower() in pick.artist.lower()
+
+
+def get_date_from_input(input_):
+    try:
+        return date.fromisoformat(input_)
+    except ValueError:
+        return None
 
 
 def get_all_cells():

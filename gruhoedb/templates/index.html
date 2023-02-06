@@ -8,7 +8,7 @@
 <body>
 <div class="container">
 <div class="item">
-<h1>GruHö-Datenbank-Suche</h1>
+<a href="/"><h1>GruHö-Datenbank-Suche</h1></a>
 <form action="/search" method="get">
     <div>
         <label for="artist">Artist:</label>
@@ -17,6 +17,14 @@
     <div>
         <label for="album">Album:</label>
         <input id="album" name="album" />
+    </div>
+    <div>
+        <label>From:</label>
+        <input type="date" id="from" name="from" />
+    </div>
+    <div>
+        <label>To:</label>
+        <input type="date" id="to" name="to" />
     </div>
     <div>
         <label>Output format:</label>
