@@ -19,7 +19,15 @@ a {
     border: 1px solid #999;
     border-radius: .5em;
     padding: 20px;
-    width: 40em;
+    width: 100%;
+}
+
+@media (orientation: portrait) {
+    .item { height: 100%; }
+}
+
+@media (orientation: landscape) {
+  .item { width: 40em; }
 }
 
 #content {
