@@ -2,6 +2,7 @@ from datetime import date
 from enum import StrEnum, auto
 import os
 
+from babel.dates import format_date
 from flask import Flask, abort, jsonify, redirect, render_template, request
 
 from gruhoedb import get_cells
@@ -17,6 +18,10 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY')
 class OutputFormat(StrEnum):
     HTML = auto()
     JSON = auto()
+
+
+def date_format(date, locale):
+    return format_date(date, locale=locale, format='short')
 
 
 @app.route('/favicon.ico')
@@ -37,7 +42,7 @@ def search():
     to = get_date_from_input(request.args.get('to')) or date.today()
 
     cells = [
-        pick._asdict() for pick in get_all_cells() if matches_search(pick, artist_query, album_query)
+        pick for pick in get_all_cells() if matches_search(pick, artist_query, album_query)
         and from_ < pick.date < to
     ]
 
@@ -45,8 +50,10 @@ def search():
 
     outputformat = request.args.get('outputformat')
 
+    locale = request.accept_languages.best or 'en'
+
     if outputformat == OutputFormat.HTML:
-        return render_template('index.html', search_results=results)
+        return render_template('index.html', search_results=results, date_format=date_format, locale=locale)
     elif outputformat == OutputFormat.JSON:
         return jsonify(results)
     else:

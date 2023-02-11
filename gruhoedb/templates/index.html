@@ -51,9 +51,7 @@
     <table id="searchResults">
         <thead>
             <tr>
-                <th>Year</th>
-                <th>Month</th>
-                <th>Day</th>
+                <th>Date</th>
                 <th>Artist</th>
                 <th>Album</th>
             </tr>
@@ -61,9 +59,7 @@
         <tbody>
         {% for result in search_results %}
             <tr>
-                <td class="num">{{ result.year }}</td>
-                <td class="num">{{ result.month }}</td>
-                <td class="num">{{ result.day }}</td>
+                <td class="num" data-order="{{ result.date.toordinal() }}">{{ date_format(result.date, locale) }}</td>
                 <td>{{ result.artist }}</td>
                 <td>{{ result.album }}</td>
             </tr>
