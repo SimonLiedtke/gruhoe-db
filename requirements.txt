@@ -1,3 +1,4 @@
+Babel
 flask
 gunicorn
 google-api-python-client
