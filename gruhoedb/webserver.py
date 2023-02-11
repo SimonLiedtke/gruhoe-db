@@ -50,7 +50,7 @@ def search():
 
     outputformat = request.args.get('outputformat')
 
-    locale = request.accept_languages.best or 'en'
+    locale = (request.accept_languages.best or 'en')[:2]
 
     if outputformat == OutputFormat.HTML:
         return render_template('index.html', search_results=results, date_format=date_format, locale=locale)
