@@ -27,6 +27,7 @@ a {
 
 @media (orientation: portrait) {
     .item { height: 100%; }
+    body { font-size: 200%; }
 }
 
 @media (orientation: landscape) {
