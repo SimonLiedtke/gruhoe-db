@@ -2,7 +2,7 @@ from datetime import date
 from enum import StrEnum, auto
 import os
 
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, jsonify, redirect, render_template, request
 
 from gruhoedb import get_cells
 from gruhoedb.models import Pick
@@ -17,6 +17,11 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY')
 class OutputFormat(StrEnum):
     HTML = auto()
     JSON = auto()
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return redirect('/static/favicon.ico')
 
 
 @app.route('/')
