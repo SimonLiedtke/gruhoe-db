@@ -48,7 +48,10 @@
         <input type="submit" value="Search" />
     </div>
 </form>
-{% if search_results %}
+{% if search_results is defined %}
+    {% if search_results | length is equalto 0 %}
+    No results found for search query "{{ query }}"
+    {% else %}
     <table id="searchResults">
         <thead>
             <tr>
@@ -67,6 +70,7 @@
         {% endfor %}
         </tbody>
     </table>
+    {% endif %}
 {% endif %}
 </div>
 </div>
