@@ -55,7 +55,12 @@ def search():
     query = ' '.join(filter(None, [artist_query, album_query]))
 
     if outputformat == OutputFormat.HTML:
-        return render_template('index.html', query=query, search_results=results, date_format=date_format, locale=locale)
+        return render_template(
+            'index.html',
+            query=query,
+            search_results=results,
+            date_format=date_format,
+            locale=locale)
     elif outputformat == OutputFormat.JSON:
         return jsonify(results)
     else:
