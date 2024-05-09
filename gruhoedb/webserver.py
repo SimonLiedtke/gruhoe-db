@@ -5,8 +5,7 @@ import os
 from babel.dates import format_date
 from flask import Flask, abort, jsonify, redirect, render_template, request
 
-from gruhoedb import get_cells
-from gruhoedb.models import Pick
+from gruhoedb import get_picks
 
 BAD_REQUEST = 400
 NOT_FOUND = 404
@@ -88,4 +87,4 @@ def get_date_from_input(input_):
 
 
 def get_all_cells():
-    return [Pick(*row) for row in get_cells(os.getenv('GOOGLEAPIKEY'), os.getenv('SPREADSHEET'))][1:]
+    return get_picks(os.getenv('DB_CONNECTION'))

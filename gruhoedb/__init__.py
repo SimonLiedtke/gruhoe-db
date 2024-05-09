@@ -1,12 +1,10 @@
-from googleapiclient.discovery import build
+import psycopg
+from gruhoedb.models import Pick
 
 
-def get_cells(api_key, spreadsheet_id):
-    request = make_request(api_key, spreadsheet_id)
-    response = request.execute()
-    return response['values']
-
-
-def make_request(api_key, spreadsheet_id):
-    service = build('sheets', 'v4', developerKey=api_key)
-    return service.spreadsheets().values().get(spreadsheetId=spreadsheet_id, range='Sheet1!A1:E')
+def get_picks(db_connection_string):
+    with psycopg.connect(db_connection_string) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT year, month, day, artist, album FROM gruhoe.dbo.picks')
+            results = cursor.fetchall()
+    return map(Pick.from_list, results)
