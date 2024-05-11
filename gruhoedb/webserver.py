@@ -5,7 +5,7 @@ import os
 from babel.dates import format_date
 from flask import Flask, abort, jsonify, redirect, render_template, request
 
-from gruhoedb import get_picks
+from gruhoedb.repos import PickRepository
 
 BAD_REQUEST = 400
 NOT_FOUND = 404
@@ -68,7 +68,7 @@ def search():
 
 @app.route('/count')
 def count_all():
-    return str(len(list(get_all_cells())))
+    return str(PickRepository(os.getenv('DB_CONNECTION')).count())
 
 
 def matches_search(pick, artist_query, album_query):
@@ -87,4 +87,4 @@ def get_date_from_input(input_):
 
 
 def get_all_cells():
-    return get_picks(os.getenv('DB_CONNECTION'))
+    return PickRepository(os.getenv('DB_CONNECTION')).get_all()
