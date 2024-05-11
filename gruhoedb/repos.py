@@ -15,4 +15,4 @@ class PickRepository:
         return map(Pick.from_list, results)
 
     def count(self) -> int:
-        return len(self.get_all())
+        return len(list(self.get_all()))
