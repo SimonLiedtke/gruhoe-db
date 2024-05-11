@@ -68,7 +68,7 @@ def search():
 
 @app.route('/count')
 def count_all():
-    return str(len(get_all_cells()))
+    return str(len(list(get_all_cells())))
 
 
 def matches_search(pick, artist_query, album_query):
