@@ -16,9 +16,6 @@ class PickRepository:
                 results = cursor.fetchall()
         return map(Pick.from_list, results)
 
-    def count(self) -> int:
-        return len(list(self.get_all()))
-
     def search(self, query: str, from_: date, to: date) -> list[Pick]:
         query = f'%{query}%'
         data = (
