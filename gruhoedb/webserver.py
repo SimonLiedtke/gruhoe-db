@@ -63,25 +63,8 @@ def search():
         return abort(BAD_REQUEST)
 
 
-@app.route('/count')
-def count_all():
-    return str(PickRepository(os.getenv('DB_CONNECTION')).count())
-
-
-def matches_search(pick, artist_query, album_query):
-    if artist_query and not album_query:
-        return artist_query.lower() in pick.artist.lower()
-    if not artist_query and album_query:
-        return album_query.lower() in pick.album.lower()
-    return album_query.lower() in pick.album.lower() or artist_query.lower() in pick.artist.lower()
-
-
 def get_date_from_input(input_):
     try:
         return date.fromisoformat(input_)
     except ValueError:
         return None
-
-
-def get_all_cells():
-    return PickRepository(os.getenv('DB_CONNECTION')).get_all()
