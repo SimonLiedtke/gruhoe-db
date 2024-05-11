@@ -42,7 +42,7 @@ def search():
 
     cells = [
         pick for pick in get_all_cells() if matches_search(pick, artist_query, album_query)
-        and from_ < pick.date < to
+        and from_ <= pick.date <= to
     ]
 
     results = cells[:int(os.getenv('MAX_SEARCH_RESULTS'))]
