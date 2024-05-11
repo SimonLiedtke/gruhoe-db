@@ -35,23 +35,15 @@ def index():
 
 @app.route('/search')
 def search():
-    artist_query = request.args.get('artist', '')
-    album_query = request.args.get('album', '')
+    query = request.args.get('query', '')
     from_ = get_date_from_input(request.args.get('from')) or date(1, 1, 1)
     to = get_date_from_input(request.args.get('to')) or date.today()
 
-    cells = [
-        pick for pick in get_all_cells() if matches_search(pick, artist_query, album_query)
-        and from_ <= pick.date <= to
-    ]
-
-    results = cells[:int(os.getenv('MAX_SEARCH_RESULTS'))]
+    results = list(PickRepository(os.getenv('DB_CONNECTION')).search(query, from_, to))
 
     outputformat = request.args.get('outputformat')
 
     locale = (request.accept_languages.best or 'en')[:2]
-
-    query = ' '.join(filter(None, [artist_query, album_query]))
 
     if outputformat == OutputFormat.HTML:
         return render_template(
