@@ -37,7 +37,7 @@ def index():
 def search():
     query = request.args.get('query', '')
     from_ = get_date_from_input(request.args.get('from')) or date(1, 1, 1)
-    to = get_date_from_input(request.args.get('to')) or date.today()
+    to = get_date_from_input(request.args.get('to')) or date(9999, 12, 31)
 
     repo = PickRepository(os.getenv('DB_CONNECTION'))
 
