@@ -7,34 +7,45 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-<div>
-  <canvas id="stats"></canvas>
+<div class="container">
+  <div class="item">
+    <canvas id="stats-all"></canvas>
+  </div>
+  <div class="item">
+    <canvas id="stats-year"></canvas>
+  </div>
 </div>
 
 <script>
-  const ctx = document.getElementById('stats');
-
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: {{data}}.map(row => row[0] + '-' + row[1]),
-      datasets: [{
-        data: {{data}}.map(row => row[2])
-      }]
-    },
-    options: {
-      plugins: {
-        legend: {
-          display: false
-        }
+  function showBarChart(element, data) {
+    new Chart(element, {
+      type: 'bar',
+      data: {
+        labels: data.map(row => row[0] + '-' + row[1]),
+        datasets: [{
+          data: data.map(row => row[2])
+        }]
       },
-      scales: {
-        y: {
-          beginAtZero: true
+      options: {
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
         }
       }
-    }
-  });
+    });
+  }
+
+  const all = document.getElementById('stats-all');
+  showBarChart(all, {{data_all}});
+
+  const year = document.getElementById('stats-year');
+  showBarChart(year, {{data_year}});
 </script>
 </body>
 </html>

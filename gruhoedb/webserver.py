@@ -66,7 +66,10 @@ def search():
 
 @app.route('/stats')
 def stats():
-    return show_stats(None)
+    repo = PickRepository(os.getenv('DB_CONNECTION'))
+    stats_all = dump_json(list(repo.fetch_statistics(None)))
+    stats_current_year = dump_json(list(repo.fetch_statistics(date.today().year)))
+    return render_template('stats.html', data_all=stats_all, data_year=stats_current_year)
 
 
 @app.route('/stats/<int:year>')
