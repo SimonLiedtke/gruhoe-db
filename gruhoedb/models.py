@@ -10,3 +10,9 @@ class Pick(namedtuple('Pick', ['year', 'month', 'day', 'artist', 'album'])):
     @classmethod
     def from_list(cls, list):
         return cls(*list)
+
+
+class StatsEntry(namedtuple('StatsEntry', ['year', 'month', 'count'])):
+    @classmethod
+    def from_list(cls, list):
+        return cls(*list)
