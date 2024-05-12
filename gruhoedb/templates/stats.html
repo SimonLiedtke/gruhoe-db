@@ -8,11 +8,23 @@
 </head>
 <body>
 <div class="container">
+  <a href="/"><h1>GruHö-Datenbank-Suche</h1></a>
+</div>
+
+<div class="container">
   <div class="item">
     <canvas id="stats-all"></canvas>
   </div>
   <div class="item">
     <canvas id="stats-year"></canvas>
+  </div>
+</div>
+<div class="container">
+  <div class="item">
+    <canvas id="stats-bubbles"></canvas>
+  </div>
+  <div class="item" style="height:20em">
+    <canvas></canvas>
   </div>
 </div>
 
@@ -41,11 +53,56 @@
     });
   }
 
+  function showBubbleChart(element, data) {
+    new Chart(element, {
+      type: 'bubble',
+      data: {
+        datasets: [{
+          data: data.map(row2bubble)
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: false
+          }
+        },
+        scales: {
+          x: {
+            min: 2018,
+            ticks: {
+              stepSize: 1
+            }
+          },
+          y: {
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function row2bubble(row) {
+    return {
+      x: row[0],
+      y: row[1],
+      r: row[2] * 0.2
+    };
+  }
+
   const all = document.getElementById('stats-all');
   showBarChart(all, {{data_all}});
 
   const year = document.getElementById('stats-year');
   showBarChart(year, {{data_year}});
+
+  const allBubbled = document.getElementById('stats-bubbles');
+  showBubbleChart(allBubbled, {{data_all}})
 </script>
 </body>
 </html>
