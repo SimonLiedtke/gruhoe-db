@@ -1,8 +1,10 @@
 from datetime import date
 from enum import StrEnum, auto
+from itertools import groupby
+import operator as op
 import os
 
-from babel.dates import format_date
+from babel.dates import format_date, get_day_names
 from flask import Flask, abort, jsonify, redirect, render_template, request
 from flask.json import dumps as dump_json
 
@@ -22,6 +24,10 @@ class OutputFormat(StrEnum):
 
 def date_format(date, locale):
     return format_date(date, locale=locale, format='short')
+
+
+def weekday_format(weekday_index, locale):
+    return get_day_names('wide', locale=locale)[weekday_index]
 
 
 @app.route('/favicon.ico')
@@ -69,7 +75,17 @@ def stats():
     repo = PickRepository(os.getenv('DB_CONNECTION'))
     stats_all = dump_json(list(repo.fetch_statistics(None)))
     stats_current_year = dump_json(list(repo.fetch_statistics(date.today().year)))
-    return render_template('stats.html', data_all=stats_all, data_year=stats_current_year)
+    stats_weekdays = list(weekday_stats(repo))
+    return render_template('stats.html', data_all=stats_all, data_year=stats_current_year, data_weekdays=stats_weekdays)
+
+
+def weekday_stats(repo):
+    locale = (request.accept_languages.best or 'en')[:2]
+    allpicks = list(repo.get_all())
+    allpicks.sort(key=op.attrgetter('weekday'))
+    return (
+        [weekday_format(k, locale), len(list(g))] for k, g in groupby(allpicks, key=op.attrgetter('weekday'))
+    )
 
 
 @app.route('/stats/<int:year>')
