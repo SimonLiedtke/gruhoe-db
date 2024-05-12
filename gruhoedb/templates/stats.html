@@ -23,19 +23,19 @@
   <div class="item">
     <canvas id="stats-bubbles"></canvas>
   </div>
-  <div class="item" style="height:20em">
-    <canvas></canvas>
+  <div class="item">
+    <canvas id="stats-weekdays"></canvas>
   </div>
 </div>
 
 <script>
-  function showBarChart(element, data) {
+  function showBarChart(element, labels, data) {
     new Chart(element, {
       type: 'bar',
       data: {
-        labels: data.map(row => row[0] + '-' + row[1]),
+        labels: labels,
         datasets: [{
-          data: data.map(row => row[2])
+          data: data
         }]
       },
       options: {
@@ -96,13 +96,16 @@
   }
 
   const all = document.getElementById('stats-all');
-  showBarChart(all, {{data_all}});
+  showBarChart(all, {{data_all}}.map(row => row[0] + '-' + row[1]), {{data_all}}.map(row => row[2]));
 
   const year = document.getElementById('stats-year');
-  showBarChart(year, {{data_year}});
+  showBarChart(year, {{data_year}}.map(row => row[0] + '-' + row[1]), {{data_year}}.map(row => row[2]));
 
   const allBubbled = document.getElementById('stats-bubbles');
-  showBubbleChart(allBubbled, {{data_all}})
+  showBubbleChart(allBubbled, {{data_all}});
+
+  const weekdays = document.getElementById('stats-weekdays');
+  showBarChart(weekdays, {{data_weekdays | tojson}}.map(row => row[0]), {{data_weekdays | tojson}}.map(row => row[1]));
 </script>
 </body>
 </html>
