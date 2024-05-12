@@ -88,16 +88,6 @@ def weekday_stats(repo):
     )
 
 
-@app.route('/stats/<int:year>')
-def fetch_stats(year):
-    return show_stats(year)
-
-
-def show_stats(year):
-    repo = PickRepository(os.getenv('DB_CONNECTION'))
-    return render_template('stats.html', data=dump_json(list(repo.fetch_statistics(year))))
-
-
 def get_date_from_input(input_):
     try:
         return date.fromisoformat(input_)
