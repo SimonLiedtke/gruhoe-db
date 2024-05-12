@@ -70,3 +70,11 @@ td, th {
 td.num {
     text-align: right;
 }
+
+canvas {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 95% !important;
+}

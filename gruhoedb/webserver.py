@@ -4,6 +4,7 @@ import os
 
 from babel.dates import format_date
 from flask import Flask, abort, jsonify, redirect, render_template, request
+from flask.json import dumps as dump_json
 
 from gruhoedb.repos import PickRepository
 
@@ -61,6 +62,21 @@ def search():
         return jsonify(list(results))
     else:
         return abort(BAD_REQUEST)
+
+
+@app.route('/stats')
+def stats():
+    return show_stats(None)
+
+
+@app.route('/stats/<int:year>')
+def fetch_stats(year):
+    return show_stats(year)
+
+
+def show_stats(year):
+    repo = PickRepository(os.getenv('DB_CONNECTION'))
+    return render_template('stats.html', data=dump_json(list(repo.fetch_statistics(year))))
 
 
 def get_date_from_input(input_):

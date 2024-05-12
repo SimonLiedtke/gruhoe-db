@@ -2,7 +2,7 @@ from datetime import date
 
 import psycopg
 
-from gruhoedb.models import Pick
+from gruhoedb.models import Pick, StatsEntry
 
 
 class PickRepository:
@@ -38,3 +38,24 @@ class PickRepository:
                 cursor.execute(sql, data)
                 results = cursor.fetchall()
         return map(Pick.from_list, results)
+
+    def fetch_statistics(self, year: int = None) -> list[StatsEntry]:
+        sql = '''
+            SELECT year, month, count(*)
+            FROM gruhoedb.dbo.picks
+            GROUP BY year, month
+        '''
+
+        if year is None:
+            data = ()
+        else:
+            data = (year,)
+            sql += ' HAVING year = %s'
+
+        sql += ' ORDER BY year, month'
+
+        with psycopg.connect(self.db_connection_string) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, data)
+                results = cursor.fetchall()
+        return map(StatsEntry.from_list, results)

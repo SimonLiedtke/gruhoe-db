@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gruhö-DB &mdash; Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div>
+  <canvas id="stats"></canvas>
+</div>
+
+<script>
+  const ctx = document.getElementById('stats');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{data}}.map(row => row[0] + '-' + row[1]),
+      datasets: [{
+        data: {{data}}.map(row => row[2])
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
