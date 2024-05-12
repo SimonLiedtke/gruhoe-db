@@ -36,10 +36,6 @@ a {
   .item { width: 40em; }
 }
 
-#content {
-    width: 20em;
-}
-
 form {
     display: table;
 }
