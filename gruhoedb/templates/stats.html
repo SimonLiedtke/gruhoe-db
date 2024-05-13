@@ -30,21 +30,17 @@
 </div>
 
 <script>
-  function showBarChart(element, labels, data) {
+  function showBarChart(element, label, labels, data) {
     new Chart(element, {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [{
+          label: label,
           data: data
         }]
       },
       options: {
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
         scales: {
           y: {
             beginAtZero: true
@@ -54,19 +50,17 @@
     });
   }
 
-  function showBubbleChart(element, data) {
+  function showBubbleChart(element, label, data) {
     new Chart(element, {
       type: 'bubble',
       data: {
         datasets: [{
+          label: label,
           data: data.map(row2bubble)
         }]
       },
       options: {
         plugins: {
-          legend: {
-            display: false
-          },
           tooltip: {
             enabled: false
           }
@@ -97,16 +91,16 @@
   }
 
   const all = document.getElementById('stats-all');
-  showBarChart(all, {{data_all}}.map(row => row[0] + '-' + row[1]), {{data_all}}.map(row => row[2]));
+  showBarChart(all, 'All Picks', {{data_all}}.map(row => row[0] + '-' + row[1]), {{data_all}}.map(row => row[2]));
 
   const year = document.getElementById('stats-year');
-  showBarChart(year, {{data_year}}.map(row => row[0] + '-' + row[1]), {{data_year}}.map(row => row[2]));
+  showBarChart(year, 'Picks of the Current Year', {{data_year}}.map(row => row[0] + '-' + row[1]), {{data_year}}.map(row => row[2]));
 
   const allBubbled = document.getElementById('stats-bubbles');
-  showBubbleChart(allBubbled, {{data_all}});
+  showBubbleChart(allBubbled, 'Picks by Year and Month', {{data_all}});
 
   const weekdays = document.getElementById('stats-weekdays');
-  showBarChart(weekdays, {{data_weekdays | tojson}}.map(row => row[0]), {{data_weekdays | tojson}}.map(row => row[1]));
+  showBarChart(weekdays, 'Picks by Day of the Week', {{data_weekdays | tojson}}.map(row => row[0]), {{data_weekdays | tojson}}.map(row => row[1]));
 </script>
 </body>
 </html>
