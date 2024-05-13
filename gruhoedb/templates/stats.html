@@ -86,18 +86,20 @@
     return {
       x: row[0],
       y: row[1],
-      r: row[2] * 0.2
+      r: row[3] * 0.2
     };
   }
 
   const all = document.getElementById('stats-all');
-  showBarChart(all, 'All Picks', {{data_all}}.map(row => row[0] + '-' + row[1]), {{data_all}}.map(row => row[2]));
+  const all_data = JSON.parse({{data_all | tojson}});
+  showBarChart(all, 'All Picks', all_data.map(row => row[0] + '-' + row[2]), all_data.map(row => row[3]));
 
+  const yearly_data = JSON.parse({{data_year | tojson}});
   const year = document.getElementById('stats-year');
-  showBarChart(year, 'Picks of the Current Year', {{data_year}}.map(row => row[0] + '-' + row[1]), {{data_year}}.map(row => row[2]));
+  showBarChart(year, 'Picks of the Current Year', yearly_data.map(row => row[0] + '-' + row[2]), yearly_data.map(row => row[3]));
 
   const allBubbled = document.getElementById('stats-bubbles');
-  showBubbleChart(allBubbled, 'Picks by Year and Month', {{data_all}});
+  showBubbleChart(allBubbled, 'Picks by Year and Month', all_data);
 
   const weekdays = document.getElementById('stats-weekdays');
   showBarChart(weekdays, 'Picks by Day of the Week', {{data_weekdays | tojson}}.map(row => row[0]), {{data_weekdays | tojson}}.map(row => row[1]));
