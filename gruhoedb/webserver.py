@@ -6,11 +6,12 @@ from itertools import groupby
 import operator as op
 import os
 
-from babel.dates import format_date, get_day_names
+from babel.dates import format_date, get_day_names, get_month_names
 from flask import Flask, abort, jsonify, redirect, render_template, request, make_response
 from flask.json import dumps as dump_json
 
 from gruhoedb.repos import PickRepository
+from gruhoedb.models import StatsEntry
 
 BAD_REQUEST = 400
 NOT_FOUND = 404
@@ -31,6 +32,10 @@ def date_format(date, locale):
 
 def weekday_format(weekday_index, locale):
     return get_day_names('wide', locale=locale)[weekday_index]
+
+
+def month_format(month_index, locale):
+    return get_month_names('abbreviated', locale=locale)[month_index]
 
 
 @app.route('/favicon.ico')
@@ -79,11 +84,17 @@ def search():
 
 @app.route('/stats')
 def stats():
+    locale = (request.accept_languages.best or 'en')[:2]
     repo = PickRepository(os.getenv('DB_CONNECTION'))
-    stats_all = dump_json(list(repo.fetch_statistics(None)))
-    stats_current_year = dump_json(list(repo.fetch_statistics(date.today().year)))
+    stats_all = dump_json(list(format_stats_results(repo.fetch_statistics(None), locale)))
+    stats_current_year = dump_json(list(format_stats_results(repo.fetch_statistics(date.today().year), locale)))
     stats_weekdays = list(weekday_stats(repo))
     return render_template('stats.html', data_all=stats_all, data_year=stats_current_year, data_weekdays=stats_weekdays)
+
+
+def format_stats_results(stats_entries: list[StatsEntry], locale: str):
+    for entry in stats_entries:
+        yield entry.year, entry.month, month_format(entry.month, locale), entry.count
 
 
 def weekday_stats(repo):
