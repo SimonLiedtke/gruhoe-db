@@ -1,11 +1,13 @@
+import csv
 from datetime import date
 from enum import StrEnum, auto
+from io import StringIO
 from itertools import groupby
 import operator as op
 import os
 
 from babel.dates import format_date, get_day_names
-from flask import Flask, abort, jsonify, redirect, render_template, request
+from flask import Flask, abort, jsonify, redirect, render_template, request, make_response
 from flask.json import dumps as dump_json
 
 from gruhoedb.repos import PickRepository
@@ -20,6 +22,7 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY')
 class OutputFormat(StrEnum):
     HTML = auto()
     JSON = auto()
+    CSV = auto()
 
 
 def date_format(date, locale):
@@ -66,6 +69,10 @@ def search():
             locale=locale)
     elif outputformat == OutputFormat.JSON:
         return jsonify(list(results))
+    elif outputformat == OutputFormat.CSV:
+        response = make_response(csvify(results))
+        response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+        return response
     else:
         return abort(BAD_REQUEST)
 
@@ -93,3 +100,11 @@ def get_date_from_input(input_):
         return date.fromisoformat(input_)
     except ValueError:
         return None
+
+
+def csvify(picks):
+    f = StringIO()
+    writer = csv.writer(f)
+    writer.writerows(picks)
+    f.seek(0)
+    return f.read()
