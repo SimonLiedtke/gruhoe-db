@@ -1,5 +1,6 @@
 from collections.abc import Iterator
 from datetime import date
+from itertools import repeat
 import re
 
 from babel.dates import get_month_names
@@ -36,6 +37,25 @@ class PickRepository:
                 cursor.execute(sql, data)
                 result = cursor.fetchone()
         return result[0]
+
+    def add_many(self, picks: list[Pick]) -> None:
+        if not picks:
+            return
+
+        sql = 'INSERT INTO gruhoedb.dbo.picks (year, month, day, artist, album) VALUES\n'
+
+        if len(picks) > 1:
+            sql += '\n'.join(repeat('(%s, %s, %s, %s, %s),', len(picks[:-1])))
+        sql += '(%s, %s, %s, %s, %s);'
+
+        data = []
+        for pick in picks:
+            data.extend([pick.year, pick.month, pick.day, pick.artist, pick.album])
+
+        with psycopg.connect(self.db_connection_string) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, tuple(data))
+            connection.commit()
 
     def get_all(self) -> list[Pick]:
         with psycopg.connect(self.db_connection_string) as connection:
