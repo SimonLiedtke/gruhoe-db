@@ -96,7 +96,7 @@
 
   const yearly_data = JSON.parse({{data_year | tojson}});
   const year = document.getElementById('stats-year');
-  showBarChart(year, 'Picks of the Current Year', yearly_data.map(row => row[0] + '-' + row[2]), yearly_data.map(row => row[3]));
+  showBarChart(year, 'Picks of the Current Year', yearly_data.map(row => row[2]), yearly_data.map(row => row[3]));
 
   const allBubbled = document.getElementById('stats-bubbles');
   showBubbleChart(allBubbled, 'Picks by Year and Month', all_data);
