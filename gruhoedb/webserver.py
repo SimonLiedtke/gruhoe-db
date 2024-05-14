@@ -54,7 +54,6 @@ def search():
     from_ = get_date_from_input(request.args.get('from')) or date(1, 1, 1)
     to = get_date_from_input(request.args.get('to')) or date(9999, 12, 31)
     outputformat = request.args.get('outputformat')
-    locale = (request.accept_languages.best or 'en')[:2]
 
     repo = PickRepository(os.getenv('DB_CONNECTION'))
     results = repo.search(query, from_, to)
@@ -67,7 +66,7 @@ def search():
             to=to,
             search_results=list(results),
             date_format=date_format,
-            locale=locale)
+            locale=(request.accept_languages.best or 'en')[:2])
     elif outputformat == OutputFormat.JSON:
         return jsonify(list(results))
     elif outputformat == OutputFormat.CSV:
