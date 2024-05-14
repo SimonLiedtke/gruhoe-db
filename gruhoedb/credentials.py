@@ -19,6 +19,7 @@ class GoogleDocsCredentials:
     def from_envvars(cls):
         keys = [
             ('client_email', 'GOOGLE_SERVICE_ACCOUNT_EMAIL'),
+            ('client_id', 'GOOGLE_SERVICE_ACCOUNT_CLIENT_ID'),
             ('private_key', 'GOOGLE_SERVICE_ACCOUNT_KEY'),
             ('private_key_id', 'GOOGLE_SERVICE_ACCOUNT_KEY_ID'),
             ('project_id', 'GOOGLE_SERVICE_ACCOUNT_PROJECT_ID'),
