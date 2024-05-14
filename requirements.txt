@@ -3,3 +3,5 @@ flask
 gunicorn
 python-dotenv
 psycopg
+google-api-python-client
+google-auth
