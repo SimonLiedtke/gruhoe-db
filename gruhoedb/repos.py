@@ -17,25 +17,28 @@ class PickRepository:
         return map(Pick.from_list, results)
 
     def search(self, query: str, from_: date, to: date) -> list[Pick]:
-        query = f'%{query}%'
-        data = (
-            query, query,
-            from_.year, to.year,
-            from_.month, to.month,
-            from_.day, to.day
-        )
         sql = '''
             SELECT year, month, day, artist, album
             FROM gruhoedb.dbo.picks
             WHERE
-                (artist ILIKE %s OR album ILIKE %s)
-                AND year BETWEEN %s AND %s
+                year BETWEEN %s AND %s
                 AND month BETWEEN %s AND %s
                 AND day between %s AND %s
         '''
+        data = [
+            from_.year, to.year,
+            from_.month, to.month,
+            from_.day, to.day,
+        ]
+
+        if query:
+            sql += ' AND (artist ILIKE %s OR album ILIKE %s)'
+            query = f'%{query}%'
+            data += [query, query]
+
         with psycopg.connect(self.db_connection_string) as connection:
             with connection.cursor() as cursor:
-                cursor.execute(sql, data)
+                cursor.execute(sql, tuple(data))
                 results = cursor.fetchall()
         return map(Pick.from_list, results)
 
