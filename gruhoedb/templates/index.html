@@ -25,15 +25,15 @@
 <form action="/search" method="get">
     <div>
         <label for="query">Search (artist or album):</label>
-        <input id="query" name="query" />
+        <input id="query" name="query" value="{{query}}" />
     </div>
     <div>
         <label for="from">From:</label>
-        <input type="date" id="from" name="from" />
+        <input type="date" id="from" name="from" value="{{from_}}" />
     </div>
     <div>
         <label for="to">To:</label>
-        <input type="date" id="to" name="to" />
+        <input type="date" id="to" name="to" value="{{to}}" />
     </div>
     <div>
         <label>Output format:</label>

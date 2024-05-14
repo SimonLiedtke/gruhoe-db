@@ -69,6 +69,8 @@ def search():
         return render_template(
             'index.html',
             query=query,
+            from_=from_,
+            to=to,
             search_results=list(results),
             date_format=date_format,
             locale=locale)
