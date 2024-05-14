@@ -53,17 +53,11 @@ def search():
     query = request.args.get('query', '')
     from_ = get_date_from_input(request.args.get('from')) or date(1, 1, 1)
     to = get_date_from_input(request.args.get('to')) or date(9999, 12, 31)
+    outputformat = request.args.get('outputformat')
+    locale = (request.accept_languages.best or 'en')[:2]
 
     repo = PickRepository(os.getenv('DB_CONNECTION'))
-
-    if not query:
-        results = repo.get_all()
-    else:
-        results = repo.search(query, from_, to)
-
-    outputformat = request.args.get('outputformat')
-
-    locale = (request.accept_languages.best or 'en')[:2]
+    results = repo.search(query, from_, to)
 
     if outputformat == OutputFormat.HTML:
         return render_template(
