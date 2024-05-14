@@ -14,6 +14,29 @@ class PickRepository:
     def __init__(self, db_connection_string) -> None:
         self.db_connection_string = db_connection_string
 
+    def __contains__(self, pick: Pick) -> bool:
+        if not (isinstance(pick, Pick)):
+            raise TypeError
+        sql = '''
+        SELECT EXISTS (
+            SELECT 1
+            FROM gruhoedb.dbo.picks
+            WHERE
+                year = %s
+                AND month = %s
+                AND day = %s
+                AND artist = %s
+                AND album = %s
+        )
+        '''
+        data = (pick.year, pick.month, pick.day, pick.artist, pick.album)
+
+        with psycopg.connect(self.db_connection_string) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, data)
+                result = cursor.fetchone()
+        return result[0]
+
     def get_all(self) -> list[Pick]:
         with psycopg.connect(self.db_connection_string) as connection:
             with connection.cursor() as cursor:
