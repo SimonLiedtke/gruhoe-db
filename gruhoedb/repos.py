@@ -1,8 +1,13 @@
+from collections.abc import Iterator
 from datetime import date
+import re
 
+from babel.dates import get_month_names
+from googleapiclient.discovery import build
 import psycopg
 
 from gruhoedb.models import Pick, StatsEntry
+from gruhoedb.credentials import GoogleDocsCredentials
 
 
 class PickRepository:
@@ -62,3 +67,49 @@ class PickRepository:
                 cursor.execute(sql, data)
                 results = cursor.fetchall()
         return map(StatsEntry.from_list, results)
+
+
+class GoogleDocsRepo:
+    def __init__(self, credentials: GoogleDocsCredentials, document_id: str, locale: str) -> None:
+        self.translated_months = list(get_month_names('wide', locale=locale).values())
+        service = build('docs', 'v1', credentials=credentials.credentials)
+        document = service.documents().get(documentId=document_id).execute()
+        body = document['body']
+        self.content = body['content']
+        self.linepos = 0
+        self.year = 0
+        self.month = 0
+        self.day = 0
+
+    def __iter__(self) -> Iterator[Pick]:
+        return self
+
+    def __next__(self) -> Pick:
+        self.linepos += 1
+        try:
+            line = self.content[self.linepos]
+        except IndexError:
+            raise StopIteration
+
+        paragraph = line['paragraph']
+        style_type = paragraph['paragraphStyle']['namedStyleType']
+        content = paragraph['elements'][0]['textRun']['content'].strip()
+        if style_type == 'TITLE':
+            m = re.search(r'\d{4}', content)
+            if m is not None:
+                self.year = int(m.group())
+            return None
+        elif style_type == 'HEADING_1':
+            month_name = content
+            self.month = self.translated_months.index(month_name) + 1
+            return None
+        elif style_type == 'HEADING_2':
+            m = re.search(r'(\d{1,2})\.', content)
+            if m is not None:
+                self.day = int(m.group(1))
+        elif style_type == 'NORMAL_TEXT':
+            artist, album = content.split(' - ', maxsplit=1)
+            if self.year > 0 and self.month > 0 and self.day > 0 and artist and album:
+                return Pick(self.year, self.month, self.day, artist, album)
+
+        return None
