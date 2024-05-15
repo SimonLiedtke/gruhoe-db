@@ -4,18 +4,10 @@
     <!-- https://codeberg.org/ThisIsFine/gruhoe-db -->
     <meta charset="UTF-8">
     <title>Gruhö-DB</title>
-    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.2/datatables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jq-3.6.0/dt-1.13.2/datatables.min.css" />
+    <script type="text/javascript" src="{{ url_for('static', filename='datatables.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='datatables.min.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#searchResults').DataTable({
-                "searching": false,
-                "lengthChange": false,
-                "order": [[0, 'desc']]
-            });
-        });
-    </script>
 </head>
 <body>
 <div class="container">
