@@ -59,14 +59,16 @@ def search():
     results = repo.search(query, from_, to)
 
     if outputformat == OutputFormat.HTML:
-        return render_template(
+        response = make_response(render_template(
             'index.html',
             query=query,
             from_=from_,
             to=to,
             search_results=list(results),
             date_format=date_format,
-            locale=(request.accept_languages.best or 'en')[:2])
+            locale=(request.accept_languages.best or 'en')[:2]))
+        response.headers['Content-Security-Policy'] = "default-src 'self'"
+        return response
     elif outputformat == OutputFormat.JSON:
         return jsonify(list(results))
     elif outputformat == OutputFormat.CSV:
