@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <title>Gruhö-DB &mdash; Statistics</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='stats.js') }}"></script>
 </head>
 <body>
 <div class="container">
@@ -30,66 +31,6 @@
 </div>
 
 <script>
-  function showBarChart(element, label, labels, data) {
-    new Chart(element, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: label,
-          data: data
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-  }
-
-  function showBubbleChart(element, label, data) {
-    new Chart(element, {
-      type: 'bubble',
-      data: {
-        datasets: [{
-          label: label,
-          data: data.map(row2bubble)
-        }]
-      },
-      options: {
-        plugins: {
-          tooltip: {
-            enabled: false
-          }
-        },
-        scales: {
-          x: {
-            min: 2018,
-            ticks: {
-              stepSize: 1
-            }
-          },
-          y: {
-            ticks: {
-              stepSize: 1
-            }
-          }
-        }
-      }
-    });
-  }
-
-  function row2bubble(row) {
-    return {
-      x: row[0],
-      y: row[1],
-      r: row[3] * 0.2
-    };
-  }
-
   const all = document.getElementById('stats-all');
   const all_data = JSON.parse({{data_all | tojson}});
   showBarChart(all, 'All Picks', all_data.map(row => row[0] + '-' + row[2]), all_data.map(row => row[3]));
