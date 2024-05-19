@@ -137,6 +137,8 @@ class GoogleDocsRepo:
         paragraph = line['paragraph']
         style_type = paragraph['paragraphStyle']['namedStyleType']
         content = paragraph['elements'][0]['textRun']['content'].strip()
+        if not content:
+            return None
         if style_type == 'TITLE':
             m = re.search(r'\d{4}', content)
             if m is not None:
