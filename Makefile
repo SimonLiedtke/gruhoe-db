@@ -8,4 +8,7 @@ push:
 	docker push $(image_tag)
 
 local:
-	docker run -p 8080:8080 --env-file=.env $(image_tag)
+	gunicorn --log-level=debug -b 127.0.0.1:8080 gruhoedb.webserver:app
+
+localdebug:
+	flask --app gruhoedb.webserver:app run --debug
