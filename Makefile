@@ -12,3 +12,6 @@ local:
 
 localdebug:
 	flask --app gruhoedb.webserver:app run --debug
+
+clean:
+	docker image prune -a
