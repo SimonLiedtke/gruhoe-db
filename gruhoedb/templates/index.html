@@ -5,15 +5,42 @@
     <meta charset="UTF-8">
     <title>Gruhö-DB</title>
     <script type="text/javascript" src="{{ url_for('static', filename='datatables.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery-ui.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jquery-ui.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='datatables.min.css') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
+<div id="login-dialog" title="Login">
+    <form>
+        <fieldset>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" class="text ui-widget-content ui-corner-all">
+        </fieldset>
+    </form>
+</div>
+<div id="sync-dialog" title="Sync to GruHö DB">
+    <table id="pickstosync">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Artist</th>
+                <th>Album</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+
 <div class="container">
 <div class="item">
 <a href="/"><h1>GruHö-Datenbank-Suche</h1></a>
 <a href="/stats"><h2>Statistik</h2></a>
+<a id="login"><h6>Login</h6></a>
 <form action="/search" method="get">
     <div>
         <label for="query">Search (artist or album):</label>

@@ -68,3 +68,7 @@ td, th {
 td.num {
     text-align: right;
 }
+
+#login:hover {
+    cursor: pointer;
+}

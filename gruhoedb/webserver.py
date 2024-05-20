@@ -3,6 +3,7 @@ from datetime import date
 from enum import StrEnum, auto
 from io import StringIO
 from itertools import groupby
+import json
 import operator as op
 import os
 
@@ -10,10 +11,12 @@ from babel.dates import format_date, get_day_names, get_month_names
 from flask import Flask, abort, jsonify, redirect, render_template, request, make_response
 from flask.json import dumps as dump_json
 
+from gruhoedb.services import SyncServiceFactory
 from gruhoedb.repos import PickRepository
 from gruhoedb.models import StatsEntry
 
 BAD_REQUEST = 400
+UNAUTHORIZED = 401
 NOT_FOUND = 404
 
 app = Flask(__name__)
@@ -46,6 +49,33 @@ def favicon():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.post('/login')
+def login():
+    if request.form['password'] == os.getenv('GOOGLE_API_KEY'):
+        return ''
+    abort(UNAUTHORIZED)
+
+
+@app.get('/newpicks')
+def get_newpicks():
+    from datetime import datetime
+    locale = (request.accept_languages.best or 'en')[:2]
+    sync_service = SyncServiceFactory.create(locale)
+    app.logger.debug(datetime.now())
+    to_be_added = sync_service.to_be_added
+    app.logger.debug(to_be_added)
+    app.logger.debug(json.dumps(to_be_added))
+    return json.dumps(to_be_added)
+
+
+@app.post('/sync')
+def sync():
+    locale = (request.accept_languages.best or 'en')[:2]
+    sync_service = SyncServiceFactory.create(locale)
+    sync_service.sync()
+    return ''
 
 
 @app.route('/search')
