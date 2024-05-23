@@ -1,4 +1,4 @@
-version := $(shell git describe --always)
+version := $(shell git describe --tags --always)
 image_tag := thatisfine/gruhoedb:$(version)
 
 build:
