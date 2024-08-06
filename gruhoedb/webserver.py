@@ -85,7 +85,7 @@ def search():
     to = get_date_from_input(request.args.get('to')) or date(9999, 12, 31)
     outputformat = request.args.get('outputformat')
 
-    repo = PickRepository(os.getenv('DB_CONNECTION'))
+    repo = PickRepository(os.getenv('DB_CONNECTION'), os.environ.get('DB_NAME'))
     results = repo.search(query, from_, to)
 
     if outputformat == OutputFormat.HTML:
@@ -112,7 +112,7 @@ def search():
 @app.route('/stats')
 def stats():
     locale = (request.accept_languages.best or 'en')[:2]
-    repo = PickRepository(os.getenv('DB_CONNECTION'))
+    repo = PickRepository(os.getenv('DB_CONNECTION'), os.environ.get('DB_NAME'))
     stats_all = dump_json(list(format_stats_results(repo.fetch_statistics(None), locale)))
     stats_current_year = dump_json(list(format_stats_results(repo.fetch_statistics(date.today().year), locale)))
     stats_weekdays = list(weekday_stats(repo))

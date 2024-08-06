@@ -31,6 +31,6 @@ class SyncServiceFactory:
         documents = os.environ.get('GOOGLE_DOCUMENT_IDS').split(';')
         creds = GoogleDocsCredentials.from_envvars()
         gdoc_repos = map(lambda doc: GoogleDocsRepo(creds, doc, locale), documents)
-        pick_repo = PickRepository(os.environ.get('DB_CONNECTION'))
+        pick_repo = PickRepository(os.environ.get('DB_CONNECTION'), os.environ.get('DB_NAME'))
 
         return SyncService(pick_repo, gdoc_repos)

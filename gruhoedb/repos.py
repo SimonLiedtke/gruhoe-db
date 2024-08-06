@@ -1,6 +1,7 @@
 from collections.abc import Iterator
 from datetime import date
 from itertools import repeat
+import os
 import re
 
 from babel.dates import get_month_names
@@ -12,16 +13,17 @@ from gruhoedb.credentials import GoogleDocsCredentials
 
 
 class PickRepository:
-    def __init__(self, db_connection_string) -> None:
+    def __init__(self, db_connection_string, db_name) -> None:
         self.db_connection_string = db_connection_string
+        self.db_name = db_name
 
     def __contains__(self, pick: Pick) -> bool:
         if not (isinstance(pick, Pick)):
             raise TypeError
-        sql = '''
+        sql = f'''
         SELECT EXISTS (
             SELECT 1
-            FROM gruhoedb.dbo.picks
+            FROM {self.db_name}.dbo.picks
             WHERE
                 year = %s
                 AND month = %s
@@ -42,7 +44,7 @@ class PickRepository:
         if not picks:
             return
 
-        sql = 'INSERT INTO gruhoedb.dbo.picks (year, month, day, artist, album) VALUES\n'
+        sql = f'INSERT INTO {self.db_name}.dbo.picks (year, month, day, artist, album) VALUES\n'
 
         if len(picks) > 1:
             sql += '\n'.join(repeat('(%s, %s, %s, %s, %s),', len(picks[:-1])))
@@ -60,14 +62,14 @@ class PickRepository:
     def get_all(self) -> list[Pick]:
         with psycopg.connect(self.db_connection_string) as connection:
             with connection.cursor() as cursor:
-                cursor.execute('SELECT year, month, day, artist, album FROM gruhoedb.dbo.picks')
+                cursor.execute(f'SELECT year, month, day, artist, album FROM {self.db_name}.dbo.picks')
                 results = cursor.fetchall()
         return map(Pick.from_list, results)
 
     def search(self, query: str, from_: date, to: date) -> list[Pick]:
-        sql = '''
+        sql = f'''
             SELECT year, month, day, artist, album
-            FROM gruhoedb.dbo.picks
+            FROM {self.db_name}.dbo.picks
             WHERE
                 year BETWEEN %s AND %s
                 AND month BETWEEN %s AND %s
@@ -91,9 +93,9 @@ class PickRepository:
         return map(Pick.from_list, results)
 
     def fetch_statistics(self, year: int = None) -> list[StatsEntry]:
-        sql = '''
+        sql = f'''
             SELECT year, month, count(*)
-            FROM gruhoedb.dbo.picks
+            FROM {self.db_name}.dbo.picks
             GROUP BY year, month
         '''
 
