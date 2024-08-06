@@ -19,7 +19,7 @@ class SyncService:
         def inner():
             for doc in self.gdoc_repos:
                 for pick in doc:
-                    if pick is not None and pick not in self.pick_repo:
+                    if pick is not None:
                         yield pick
 
         return list(inner())
