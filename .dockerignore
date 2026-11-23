@@ -1,0 +1,21 @@
+# Secrets: never bake credentials into the image, pass them at runtime (--env-file / orchestrator).
+**/.env*
+**/*.json
+
+# Version control, CI and editor files
+.git
+.gitignore
+.github
+.idea
+
+# Python environments and caches
+.venv
+venv
+__pycache__
+.pytest_cache
+
+# Tests and dev tooling are not needed at runtime
+tests
+pytest.ini
+.flake8
+requirements-dev.txt
