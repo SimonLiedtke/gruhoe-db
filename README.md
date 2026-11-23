@@ -97,9 +97,10 @@ The container listens on the port given by `PORT` (default `8080`).
 ## Development
 
 ```sh
-pip install -r requirements-dev.txt   # flake8, pytest
+pip install -r requirements-dev.txt   # flake8, pytest, pytest-cov
 flake8
 pytest
+pytest --cov=gruhoedb --cov-report=term-missing   # with coverage
 ```
 
 Most tests run without any external services. The `PickRepository` tests need a PostgreSQL database and are skipped
@@ -115,5 +116,6 @@ TEST_DB_CONNECTION=postgresql://postgres:test@localhost:5432/gruhoedb pytest
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every pull request and on pushes to `main`:
 
-1. **test**: `flake8` and `pytest` against a PostgreSQL service container.
+1. **test**: `flake8` and `pytest` (with `pytest-cov` coverage) against a PostgreSQL service container. The coverage
+   table is shown in the job summary and `coverage.xml` is uploaded as a build artifact.
 2. **docker**: builds the image and smoke-tests that the container serves `GET /`.
