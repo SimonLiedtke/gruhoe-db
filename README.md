@@ -29,9 +29,9 @@ Picks are kept in Google Docs, synced into a PostgreSQL database, and can then b
 | `GET /` | Search form |
 | `GET /search?query=&from=&to=&outputformat=html\|json\|csv` | Search picks. `from`/`to` are ISO dates (`YYYY-MM-DD`); `outputformat` is required |
 | `GET /stats` | Statistics charts |
-| `POST /login` | Checks the `password` form field against `ADMIN_PASSWORD` |
-| `GET /newpicks` | Lists picks found in the Google Docs that are not yet synced |
-| `POST /sync` | Writes the new picks to the database |
+| `POST /login` | Checks the `password` form field against `ADMIN_PASSWORD` and, on success, marks the session as authenticated |
+| `GET /newpicks` | Lists picks found in the Google Docs that are not yet synced (requires login, else `401`) |
+| `POST /sync` | Writes the new picks to the database (requires login, else `401`) |
 
 Month and weekday names are localised using the browser's `Accept-Language` header (falls back to `en`).
 
@@ -64,7 +64,7 @@ Configuration is read from environment variables. `flask run` (`make localdebug`
 | --- | --- |
 | `DB_CONNECTION` | PostgreSQL connection string |
 | `DB_NAME` | Database name, used to qualify the `picks` table |
-| `FLASK_SECRET_KEY` | Flask secret key |
+| `FLASK_SECRET_KEY` | Flask secret key, used to sign the session cookie (required for login) |
 | `ADMIN_PASSWORD` | Password checked by `/login` |
 | `GOOGLE_DOCUMENT_IDS` | Google Doc IDs to sync, separated by `;` |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Service account fields, as found in the service account JSON key: |
