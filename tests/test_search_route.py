@@ -55,6 +55,7 @@ def test_search_html(client, repo):
 
 @pytest.mark.parametrize('value, expected', [
     ('2024-01-02', date(2024, 1, 2)),
+    (None, None),
     ('', None),
     ('not-a-date', None),
 ])
@@ -65,3 +66,8 @@ def test_get_date_from_input(value, expected):
 def test_csvify_quotes_fields_containing_commas():
     picks = [Pick(2023, 2, 10, 'Earth, Wind & Fire', 'Album')]
     assert webserver.csvify(picks) == '2023,2,10,"Earth, Wind & Fire",Album\r\n'
+
+
+def test_search_without_dates_is_unbounded(client, repo):
+    assert client.get('/search?outputformat=json').status_code == 200
+    repo.search.assert_called_once_with('', date(1, 1, 1), date(9999, 12, 31))

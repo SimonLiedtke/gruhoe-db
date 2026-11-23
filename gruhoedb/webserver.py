@@ -154,7 +154,7 @@ def weekday_stats(repo):
 def get_date_from_input(input_):
     try:
         return date.fromisoformat(input_)
-    except ValueError:
+    except (TypeError, ValueError):
         return None
 
 
