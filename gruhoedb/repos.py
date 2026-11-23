@@ -1,7 +1,6 @@
 from collections.abc import Iterator
 from datetime import date
 from itertools import repeat
-import os
 import re
 
 from babel.dates import get_month_names
@@ -156,7 +155,8 @@ class GoogleDocsRepo:
             try:
                 artist, album = content.split(' - ', maxsplit=1)
             except ValueError:
-                # print(f'Error: year {self.year}: line {self.linepos}: "{content}": could not parse to artist and album')
+                # print(f'Error: year {self.year}: line {self.linepos}: "{content}": '
+                #       'could not parse to artist and album')
                 artist = album = content
             if self.year > 0 and self.month > 0 and self.day > 0 and artist and album:
                 return Pick(self.year, self.month, self.day, artist, album)
