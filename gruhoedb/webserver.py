@@ -53,7 +53,7 @@ def index():
 
 @app.post('/login')
 def login():
-    if request.form['password'] == os.getenv('GOOGLE_API_KEY'):
+    if request.form['password'] == os.getenv('ADMIN_PASSWORD'):
         return ''
     abort(UNAUTHORIZED)
 
