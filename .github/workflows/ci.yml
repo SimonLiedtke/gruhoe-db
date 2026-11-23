@@ -43,9 +43,21 @@ jobs:
         run: flake8
 
       - name: Test
-        run: pytest
+        # Coverage table goes to the log and the job summary; coverage.xml is uploaded below.
+        run: >-
+          pytest
+          --cov=gruhoedb
+          --cov-report=term-missing
+          --cov-report=xml
+          --cov-report="markdown-append:$GITHUB_STEP_SUMMARY"
         env:
           TEST_DB_CONNECTION: postgresql://postgres:postgres@localhost:5432/gruhoedb
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
 
   docker:
     needs: test
