@@ -53,8 +53,18 @@ $(document).ready(function () {
         width: 800
     });
 
+    function ensureLoggedIn(response) {
+        if (response.status === 401) {
+            syncDialog.dialog("close");
+            loginDialog.dialog("open");
+            throw new Error("Not logged in");
+        }
+        return response;
+    }
+
     function getNewPicks() {
         fetch("/newpicks")
+            .then(ensureLoggedIn)
             .then((response) => response.json())
             .then((picks) => {
                 if (picks) {
@@ -77,8 +87,8 @@ $(document).ready(function () {
     function sync() {
         fetch("/sync", {
             "method": "POST",
-        }).then((response) => {
+        }).then(ensureLoggedIn).then((response) => {
             console.log(response);
-        });
+        }).catch(console.error);
     }
 });

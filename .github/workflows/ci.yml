@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gruhoedb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gruhoedb"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+
+      - name: Install dependencies
+        # psycopg[binary] bundles libpq, so the runner needs no system packages.
+        run: pip install -r requirements.txt -r requirements-dev.txt "psycopg[binary]"
+
+      - name: Lint
+        run: flake8
+
+      - name: Test
+        run: pytest
+        env:
+          TEST_DB_CONNECTION: postgresql://postgres:postgres@localhost:5432/gruhoedb
+
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          push: false
+          tags: gruhoedb:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test
+        run: |
+          docker run -d --name gruhoedb -p 8080:8080 -e FLASK_SECRET_KEY=ci gruhoedb:ci
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:8080/ > /dev/null && exit 0
+            sleep 1
+          done
+          docker logs gruhoedb
+          exit 1

@@ -29,9 +29,9 @@ Picks are kept in Google Docs, synced into a PostgreSQL database, and can then b
 | `GET /` | Search form |
 | `GET /search?query=&from=&to=&outputformat=html\|json\|csv` | Search picks. `from`/`to` are ISO dates (`YYYY-MM-DD`); `outputformat` is required |
 | `GET /stats` | Statistics charts |
-| `POST /login` | Checks the `password` form field against `GOOGLE_API_KEY` |
-| `GET /newpicks` | Lists picks found in the Google Docs that are not yet synced |
-| `POST /sync` | Writes the new picks to the database |
+| `POST /login` | Checks the `password` form field against `ADMIN_PASSWORD` and, on success, marks the session as authenticated |
+| `GET /newpicks` | Lists picks found in the Google Docs that are not yet synced (requires login, else `401`) |
+| `POST /sync` | Writes the new picks to the database (requires login, else `401`) |
 
 Month and weekday names are localised using the browser's `Accept-Language` header (falls back to `en`).
 
@@ -64,8 +64,8 @@ Configuration is read from environment variables. `flask run` (`make localdebug`
 | --- | --- |
 | `DB_CONNECTION` | PostgreSQL connection string |
 | `DB_NAME` | Database name, used to qualify the `picks` table |
-| `FLASK_SECRET_KEY` | Flask secret key |
-| `GOOGLE_API_KEY` | Password checked by `/login` |
+| `FLASK_SECRET_KEY` | Flask secret key, used to sign the session cookie (required for login) |
+| `ADMIN_PASSWORD` | Password checked by `/login` |
 | `GOOGLE_DOCUMENT_IDS` | Google Doc IDs to sync, separated by `;` |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Service account fields, as found in the service account JSON key: |
 | `GOOGLE_SERVICE_ACCOUNT_CLIENT_ID` | |
@@ -97,6 +97,23 @@ The container listens on the port given by `PORT` (default `8080`).
 ## Development
 
 ```sh
-pip install -r requirements-dev.txt   # flake8
+pip install -r requirements-dev.txt   # flake8, pytest
 flake8
+pytest
 ```
+
+Most tests run without any external services. The `PickRepository` tests need a PostgreSQL database and are skipped
+unless `TEST_DB_CONNECTION` is set. Use an **empty** database named `gruhoedb` (the name is hard-coded in
+`create-schema.sql`); the tests create `dbo.picks` and drop it again, and refuse to run if that table already exists.
+
+```sh
+docker run -d --rm -p 5432:5432 -e POSTGRES_PASSWORD=test -e POSTGRES_DB=gruhoedb postgres:17
+TEST_DB_CONNECTION=postgresql://postgres:test@localhost:5432/gruhoedb pytest
+```
+
+### CI
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every pull request and on pushes to `main`:
+
+1. **test**: `flake8` and `pytest` against a PostgreSQL service container.
+2. **docker**: builds the image and smoke-tests that the container serves `GET /`.

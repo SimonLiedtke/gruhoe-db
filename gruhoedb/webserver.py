@@ -1,6 +1,8 @@
 import csv
 from datetime import date
 from enum import StrEnum, auto
+from functools import wraps
+import hmac
 from io import StringIO
 from itertools import groupby
 import json
@@ -8,7 +10,7 @@ import operator as op
 import os
 
 from babel.dates import format_date, get_day_names, get_month_names
-from flask import Flask, abort, jsonify, redirect, render_template, request, make_response
+from flask import Flask, abort, jsonify, redirect, render_template, request, make_response, session
 from flask.json import dumps as dump_json
 
 from gruhoedb.services import SyncServiceFactory
@@ -21,6 +23,7 @@ NOT_FOUND = 404
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
 
 class OutputFormat(StrEnum):
@@ -41,6 +44,15 @@ def month_format(month_index, locale):
     return get_month_names('abbreviated', locale=locale)[month_index]
 
 
+def login_required(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if not session.get('authenticated'):
+            abort(UNAUTHORIZED)
+        return view(*args, **kwargs)
+    return wrapper
+
+
 @app.route('/favicon.ico')
 def favicon():
     return redirect('/static/favicon.ico')
@@ -53,12 +65,17 @@ def index():
 
 @app.post('/login')
 def login():
-    if request.form['password'] == os.getenv('GOOGLE_API_KEY'):
+    expected = os.getenv('ADMIN_PASSWORD')
+    given = request.form.get('password', '')
+    # Fail closed if no password is configured; compare in constant time.
+    if expected and hmac.compare_digest(given.encode(), expected.encode()):
+        session['authenticated'] = True
         return ''
     abort(UNAUTHORIZED)
 
 
 @app.get('/newpicks')
+@login_required
 def get_newpicks():
     from datetime import datetime
     locale = (request.accept_languages.best or 'en')[:2]
@@ -71,6 +88,7 @@ def get_newpicks():
 
 
 @app.post('/sync')
+@login_required
 def sync():
     locale = (request.accept_languages.best or 'en')[:2]
     sync_service = SyncServiceFactory.create(locale)
@@ -136,7 +154,7 @@ def weekday_stats(repo):
 def get_date_from_input(input_):
     try:
         return date.fromisoformat(input_)
-    except ValueError:
+    except (TypeError, ValueError):
         return None
 
 
