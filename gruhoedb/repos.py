@@ -71,14 +71,12 @@ class PickRepository:
             SELECT year, month, day, artist, album
             FROM {self.db_name}.dbo.picks
             WHERE
-                year BETWEEN %s AND %s
-                AND month BETWEEN %s AND %s
-                AND day between %s AND %s
+                (year, month, day) >= (%s, %s, %s)
+                AND (year, month, day) <= (%s, %s, %s)
         '''
         data = [
-            from_.year, to.year,
-            from_.month, to.month,
-            from_.day, to.day,
+            from_.year, from_.month, from_.day,
+            to.year, to.month, to.day,
         ]
 
         if query:
